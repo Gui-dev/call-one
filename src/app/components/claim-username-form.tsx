@@ -8,18 +8,20 @@ import {
   ClaimUsernameValidationData,
 } from '../validations/claim-username-validation'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 
 export const ClaimUsernameForm: React.FC = () => {
   const {
-    formState: { errors },
+    formState: { errors, isSubmitting },
     handleSubmit,
     register,
   } = useForm<ClaimUsernameValidationData>({
     resolver: zodResolver(claimUsernameValidation),
   })
+  const router = useRouter()
 
   const handleClaimUsername = ({ username }: ClaimUsernameValidationData) => {
-    console.log(username)
+    router.push(`/register?username=${username}`)
   }
 
   return (
@@ -33,7 +35,7 @@ export const ClaimUsernameForm: React.FC = () => {
             placeholder="seu-usuário"
             {...register('username')}
           />
-          <Button size="sm" type="submit">
+          <Button size="sm" type="submit" disabled={isSubmitting}>
             Reservar
             <ArrowRight />
           </Button>
