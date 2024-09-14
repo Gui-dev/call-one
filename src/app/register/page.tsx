@@ -16,6 +16,8 @@ import {
 } from '../validations/register-validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSearchParams } from 'next/navigation'
+import { api } from '../lib/api'
+import { AxiosError } from 'axios'
 
 const Register = () => {
   const searchParams = useSearchParams()
@@ -32,8 +34,19 @@ const Register = () => {
     },
   })
 
-  const handleRegister = (data: RegisterValidationData) => {
-    console.log(data)
+  const handleRegister = async ({ name, username }: RegisterValidationData) => {
+    try {
+      await api.post('/users', {
+        username,
+        name,
+      })
+    } catch (error) {
+      if (error instanceof AxiosError && error?.response?.data.message) {
+        alert(error.response.data.message)
+        return
+      }
+      console.log(error)
+    }
   }
 
   return (
