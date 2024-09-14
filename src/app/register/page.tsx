@@ -15,11 +15,12 @@ import {
   RegisterValidationData,
 } from '../validations/register-validation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '../lib/api'
 import { AxiosError } from 'axios'
 
 const Register = () => {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const username = searchParams.get('username')
   const {
@@ -40,6 +41,7 @@ const Register = () => {
         username,
         name,
       })
+      router.push('/register/conect-calendar')
     } catch (error) {
       if (error instanceof AxiosError && error?.response?.data.message) {
         alert(error.response.data.message)

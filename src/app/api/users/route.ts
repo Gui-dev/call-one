@@ -30,7 +30,7 @@ export const POST = async (request: NextRequest) => {
   return NextResponse.json(user, {
     status: 201,
     headers: {
-      'Set-Cookie': `call.one:user_id=${user.id}; maxAge=60*60*24; path='/'`,
+      'Set-Cookie': `call.one:user_id=${user.id}; maxAge=60*60*24; SameSite=Strict; path='/'`,
     },
   })
 }
