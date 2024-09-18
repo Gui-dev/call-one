@@ -1,10 +1,17 @@
 'use client'
 
+import { signIn, useSession } from 'next-auth/react'
 import { Box, Button, Heading, MultiStep, Text } from '@ignite-ui/react'
 import { ArrowRight } from 'lucide-react'
 
 const ConectCalendar = () => {
-  // const handleRegister = async () => {}
+  const { data, status } = useSession()
+  const handleGoogleSignIn = async () => {
+    signIn('google')
+  }
+
+  console.log('DATA: ', data)
+  console.log('Status: ', status)
 
   return (
     <div className="mt-20 mx-auto mb-4 px-4 max-w-[572px] flex flex-col gap-4">
@@ -34,7 +41,11 @@ const ConectCalendar = () => {
           }}
         >
           <Text>Google Agenda</Text>
-          <Button variant="secondary" type="submit">
+          <Button
+            variant="secondary"
+            type="submit"
+            onClick={handleGoogleSignIn}
+          >
             Conectar
             <ArrowRight />
           </Button>
