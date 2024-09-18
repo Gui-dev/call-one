@@ -4,6 +4,7 @@ import './styles/globals.css'
 
 import { Roboto } from 'next/font/google'
 import { ServerStylesheet } from './components/server-styles'
+import { AuthProvider } from './providers/auth-provider'
 
 const roboto = Roboto({
   weight: ['400', '500', '700'],
@@ -23,7 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={roboto.className}>
-        <ServerStylesheet>{children}</ServerStylesheet>
+        <AuthProvider>
+          <ServerStylesheet>{children}</ServerStylesheet>
+        </AuthProvider>
       </body>
     </html>
   )
