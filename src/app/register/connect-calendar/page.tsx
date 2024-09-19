@@ -1,6 +1,6 @@
 'use client'
 
-import { signIn, useSession } from 'next-auth/react'
+import { signIn, useSession, signOut } from 'next-auth/react'
 import { Box, Button, Heading, MultiStep, Text } from '@ignite-ui/react'
 import { ArrowRight } from 'lucide-react'
 
@@ -8,6 +8,7 @@ const ConectCalendar = () => {
   const { data, status } = useSession()
   const handleGoogleSignIn = async () => {
     signIn('google')
+    // signOut()
   }
 
   console.log('DATA: ', data)
