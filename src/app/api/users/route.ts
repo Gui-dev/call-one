@@ -3,15 +3,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/app/lib/prisma'
 
 export const POST = async (request: NextRequest) => {
-  const { name, username } = await request.json()
+  const { id, name, username } = await request.json()
 
   const userExists = await prisma.user.findUnique({
     where: {
-      username,
+      id,
     },
   })
 
-  if (userExists) {
+  if (userExists?.username === username) {
     return NextResponse.json(
       { message: 'Username already taken.' },
       {
@@ -20,7 +20,10 @@ export const POST = async (request: NextRequest) => {
     )
   }
 
-  const user = await prisma.user.create({
+  const user = await prisma.user.update({
+    where: {
+      id,
+    },
     data: {
       name,
       username,
@@ -29,8 +32,5 @@ export const POST = async (request: NextRequest) => {
 
   return NextResponse.json(user, {
     status: 201,
-    headers: {
-      'Set-Cookie': `call.one:user_id=${user.id}; maxAge=60*60*24; SameSite=Strict; path='/'`,
-    },
   })
 }

@@ -1,9 +1,12 @@
-import NextAuth, { NextAuthOptions } from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
+import { prisma } from '@/app/lib/prisma'
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
 
-export const authOptions: NextAuthOptions = {
+import NextAuth, { NextAuthOptions } from 'next-auth'
+import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
+
+const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-  // Configure one or more authentication providers
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -13,6 +16,15 @@ export const authOptions: NextAuthOptions = {
           scope:
             'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar',
         },
+      },
+      profile(profile: GoogleProfile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          username: '',
+          email: profile.email,
+          avatar_url: profile.picture,
+        }
       },
     }),
     // ...add more providers here
@@ -25,6 +37,13 @@ export const authOptions: NextAuthOptions = {
         return '/register/connect-calendar/?error=permissions'
       }
       return true
+    },
+
+    async session({ session, user }) {
+      return {
+        ...session,
+        user,
+      }
     },
   },
 }

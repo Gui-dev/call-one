@@ -21,7 +21,7 @@ export const ClaimUsernameForm: React.FC = () => {
   const router = useRouter()
 
   const handleClaimUsername = ({ username }: ClaimUsernameValidationData) => {
-    router.push(`/register?username=${username}`)
+    router.push(`/register/connect-calendar/?username=${username}`)
   }
 
   return (

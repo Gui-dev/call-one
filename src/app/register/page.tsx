@@ -41,7 +41,7 @@ const Register = () => {
         username,
         name,
       })
-      router.push('/register/conect-calendar')
+      router.push(`/register/connect-calendar`)
     } catch (error) {
       if (error instanceof AxiosError && error?.response?.data.message) {
         alert(error.response.data.message)
@@ -61,7 +61,7 @@ const Register = () => {
           Previsamos de algumas informações para criar seu perfil! Ah, você pode
           editar essas informações depois
         </Text>
-        <MultiStep size={4} currentStep={1} />
+        <MultiStep size={3} currentStep={1} />
       </div>
       <Box
         as="form"
