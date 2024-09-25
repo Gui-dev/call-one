@@ -10,7 +10,7 @@ import {
   TextInput,
 } from '@ignite-ui/react'
 import { ArrowRight, Check } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import {
   registerValidation,
@@ -21,6 +21,7 @@ import { api } from '@/app/lib/api'
 import { AxiosError } from 'axios'
 
 const ConectCalendar = () => {
+  const router = useRouter()
   const query = useSearchParams()
   const { status, data } = useSession()
   const hasAuthError = !!query.get('error')
@@ -33,8 +34,7 @@ const ConectCalendar = () => {
   } = useForm<RegisterValidationData>({
     resolver: zodResolver(registerValidation),
     defaultValues: {
-      username: username ?? '',
-      name: String(data?.user?.name) ?? '',
+      username: username ?? data?.user?.username,
     },
   })
 
@@ -42,15 +42,13 @@ const ConectCalendar = () => {
     await signIn('google')
   }
 
-  const handleRegister = async ({ name, username }: RegisterValidationData) => {
+  const handleRegister = async ({ username }: RegisterValidationData) => {
     try {
       await api.post('/users', {
         id: data?.user?.id,
         username,
-        name,
       })
-      alert('Atualizado')
-      // router.push(`/register/connect-calendar`)
+      router.push(`/register/time-intervals`)
     } catch (error) {
       if (error instanceof AxiosError && error?.response?.data.message) {
         alert(error.response.data.message)
@@ -59,8 +57,6 @@ const ConectCalendar = () => {
       console.log(error)
     }
   }
-
-  console.log('Data: ', data?.user.id)
 
   return (
     <div className="mt-20 mx-auto mb-4 px-4 max-w-[572px] flex flex-col gap-4">
@@ -72,7 +68,7 @@ const ConectCalendar = () => {
           Previsamos de algumas informações para criar seu perfil! Ah, você pode
           editar essas informações depois
         </Text>
-        <MultiStep size={3} currentStep={2} />
+        <MultiStep size={3} currentStep={1} />
       </div>
 
       <Box
@@ -128,21 +124,6 @@ const ConectCalendar = () => {
                     <span className="text-red-500">
                       {errors.username?.message}
                     </span>
-                  </Text>
-                </div>
-              )}
-            </label>
-            <label className="flex flex-col gap-2">
-              <Text>Nome completo</Text>
-              {/* @ts-expect-error: ERROR */}
-              <TextInput
-                placeholder="Seu nome completo"
-                {...register('name')}
-              />
-              {errors.name && (
-                <div className="mt-1">
-                  <Text size="sm">
-                    <span className="text-red-500">{errors.name?.message}</span>
                   </Text>
                 </div>
               )}

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/app/lib/prisma'
 
 export const POST = async (request: NextRequest) => {
-  const { id, name, username } = await request.json()
+  const { id, username } = await request.json()
 
   const userExists = await prisma.user.findUnique({
     where: {
@@ -25,7 +25,6 @@ export const POST = async (request: NextRequest) => {
       id,
     },
     data: {
-      name,
       username,
     },
   })
