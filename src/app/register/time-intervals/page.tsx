@@ -23,7 +23,7 @@ import { getWeekDays } from '@/app/utils/get-week-days'
 const TimeIntervals = () => {
   const {
     control,
-    formState: { erros, isSubmitting },
+    formState: { errors, isSubmitting },
     handleSubmit,
     register,
     watch,
@@ -39,7 +39,7 @@ const TimeIntervals = () => {
         { weekDay: 6, enabled: false, startTime: '08:00', endTime: '18:00' },
       ],
     },
-    // resolver: zodResolver(timeIntervalsValidation),
+    resolver: zodResolver(timeIntervalsValidation),
   })
   const { fields } = useFieldArray({
     control,
@@ -48,7 +48,9 @@ const TimeIntervals = () => {
   const intervals = watch('intervals')
   const weekDays = getWeekDays()
 
-  const handleSetTimeIntervals = async () => {}
+  const handleSetTimeIntervals = async (data: TimeIntervalsValidationData) => {
+    console.log('DATA: ', data)
+  }
 
   return (
     <div className="mt-20 mx-auto mb-4 px-4 max-w-[572px] flex flex-col gap-4">
@@ -86,9 +88,9 @@ const TimeIntervals = () => {
                     render={({ field }) => {
                       return (
                         <Checkbox
-                          onCheckedChange={(checked) => {
+                          onCheckedChange={(checked) =>
                             field.onChange(checked === true)
-                          }}
+                          }
                           checked={field.value}
                         />
                       )
@@ -124,7 +126,13 @@ const TimeIntervals = () => {
           })}
         </div>
 
-        <Button type="submit">
+        {errors.intervals && (
+          <span className="mb-4 text-red-500 text-sm">
+            {errors.intervals?.root?.message}
+          </span>
+        )}
+
+        <Button type="submit" disabled={isSubmitting}>
           Próximo passo
           <ArrowRight />
         </Button>
