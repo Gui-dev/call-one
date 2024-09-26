@@ -1,5 +1,9 @@
 'use client'
 
+import { ArrowRight } from 'lucide-react'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+
 import {
   Box,
   Button,
@@ -9,9 +13,43 @@ import {
   Text,
   TextInput,
 } from '@ignite-ui/react'
-import { ArrowRight } from 'lucide-react'
+
+import {
+  timeIntervalsValidation,
+  TimeIntervalsValidationData,
+} from '@/app/validations/time-intervals-validation'
+import { getWeekDays } from '@/app/utils/get-week-days'
 
 const TimeIntervals = () => {
+  const {
+    control,
+    formState: { erros, isSubmitting },
+    handleSubmit,
+    register,
+    watch,
+  } = useForm({
+    defaultValues: {
+      intervals: [
+        { weekDay: 0, enabled: false, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 1, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 2, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 3, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 4, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 5, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 6, enabled: false, startTime: '08:00', endTime: '18:00' },
+      ],
+    },
+    // resolver: zodResolver(timeIntervalsValidation),
+  })
+  const { fields } = useFieldArray({
+    control,
+    name: 'intervals',
+  })
+  const intervals = watch('intervals')
+  const weekDays = getWeekDays()
+
+  const handleSetTimeIntervals = async () => {}
+
   return (
     <div className="mt-20 mx-auto mb-4 px-4 max-w-[572px] flex flex-col gap-4">
       <div className="px-6">
@@ -32,42 +70,58 @@ const TimeIntervals = () => {
           marginTop: 16,
         }}
         as="form"
+        onSubmit={handleSubmit(handleSetTimeIntervals)}
       >
         <div className="border border-gray-600 rounded-md mb-4 gap-3">
-          <div className="flex items-center justify-between px-3 py-4 border-b border-gray-600">
-            <div className="flex items-center gap-3">
-              <Checkbox />
-              <Text>Segunda-feira</Text>
-            </div>
-            <div className="flex items-center gap-2">
-              {/* @ts-expect-error: ERROR */}
-              <TextInput
-                size="sm"
-                type="time"
-                step={60}
-                css={{
-                  'input::-webkit-calendar-picker-indicator': {
-                    filter: 'interval(100%) brightness(30%)',
-                  },
-                }}
-              />
-              {/* @ts-expect-error: ERROR */}
-              <TextInput size="sm" type="time" step={60} />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between px-3 py-4 border-b border-gray-600 last:border-none">
-            <div className="flex items-center gap-3">
-              <Checkbox />
-              <Text>Terça-feira</Text>
-            </div>
-            <div className="flex items-center gap-2">
-              {/* @ts-expect-error: ERROR */}
-              <TextInput size="sm" type="time" step={60} />
-              {/* @ts-expect-error: ERROR */}
-              <TextInput size="sm" type="time" step={60} />
-            </div>
-          </div>
+          {fields.map((field, index) => {
+            return (
+              <div
+                key={field.id}
+                className="flex items-center justify-between px-3 py-4 border-b border-gray-600 last:border-none"
+              >
+                <div className="flex items-center gap-3">
+                  <Controller
+                    control={control}
+                    name={`intervals.${index}.enabled`}
+                    render={({ field }) => {
+                      return (
+                        <Checkbox
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked === true)
+                          }}
+                          checked={field.value}
+                        />
+                      )
+                    }}
+                  />
+                  <Text>{weekDays[field.weekDay]}</Text>
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* @ts-expect-error: ERROR */}
+                  <TextInput
+                    size="sm"
+                    type="time"
+                    step={60}
+                    disabled={intervals[index].enabled === false}
+                    css={{
+                      'input::-webkit-calendar-picker-indicator': {
+                        filter: 'interval(100%) brightness(30%)',
+                      },
+                    }}
+                    {...register(`intervals.${index}.startTime`)}
+                  />
+                  {/* @ts-expect-error: ERROR */}
+                  <TextInput
+                    size="sm"
+                    type="time"
+                    step={60}
+                    disabled={intervals[index].enabled === false}
+                    {...register(`intervals.${index}.endTime`)}
+                  />
+                </div>
+              </div>
+            )
+          })}
         </div>
 
         <Button type="submit">
