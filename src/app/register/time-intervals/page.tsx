@@ -16,7 +16,8 @@ import {
 
 import {
   timeIntervalsValidation,
-  TimeIntervalsValidationData,
+  TimeIntervalsValidationInputData,
+  TimeIntervalsValidationOutputData,
 } from '@/app/validations/time-intervals-validation'
 import { getWeekDays } from '@/app/utils/get-week-days'
 
@@ -27,7 +28,11 @@ const TimeIntervals = () => {
     handleSubmit,
     register,
     watch,
-  } = useForm({
+  } = useForm<
+    TimeIntervalsValidationInputData,
+    unknown,
+    TimeIntervalsValidationOutputData
+  >({
     defaultValues: {
       intervals: [
         { weekDay: 0, enabled: false, startTime: '08:00', endTime: '18:00' },
@@ -48,7 +53,7 @@ const TimeIntervals = () => {
   const intervals = watch('intervals')
   const weekDays = getWeekDays()
 
-  const handleSetTimeIntervals = async (data: TimeIntervalsValidationData) => {
+  const handleSetTimeIntervals = (data: TimeIntervalsValidationOutputData) => {
     console.log('DATA: ', data)
   }
 
@@ -88,6 +93,7 @@ const TimeIntervals = () => {
                     render={({ field }) => {
                       return (
                         <Checkbox
+                          // @ts-expect-error: Type error
                           onCheckedChange={(checked) =>
                             field.onChange(checked === true)
                           }
