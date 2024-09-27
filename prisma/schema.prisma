@@ -18,13 +18,25 @@ model User {
   avatar_url    String?
   emailVerified DateTime?
   image         String?
+  created_at    DateTime  @default(now())
+
   accounts      Account[]
   sessions      Session[]
-
-  created_at    DateTime        @default(now())
   authenticator Authenticator[]
+  timeIntervals UserTimeInterval[]
 
   @@map("users")
+}
+
+model UserTimeInterval {
+  id                    String @id @default(uuid())
+  user_id               String
+  week_day              Int
+  time_start_in_minutes Int
+  time_end_in_minutes   Int
+  user                  User   @relation(fields: [user_id], references: [id])
+
+  @@map("user_time_intervals")
 }
 
 model Account {
