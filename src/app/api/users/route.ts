@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
 import { prisma } from '@/app/lib/prisma'
+import { NextApiRequest } from 'next'
 
-export const POST = async (request: NextRequest) => {
-  const { id, username } = await request.json()
+export const POST = async (request: NextApiRequest) => {
+  const { id, username } = await request.body()
 
   const userExists = await prisma.user.findUnique({
     where: {

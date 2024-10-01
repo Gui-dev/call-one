@@ -20,6 +20,7 @@ import {
   TimeIntervalsValidationOutputData,
 } from '@/app/validations/time-intervals-validation'
 import { getWeekDays } from '@/app/utils/get-week-days'
+import { api } from '@/app/lib/api'
 
 const TimeIntervals = () => {
   const {
@@ -53,7 +54,11 @@ const TimeIntervals = () => {
   const intervals = watch('intervals')
   const weekDays = getWeekDays()
 
-  const handleSetTimeIntervals = (data: TimeIntervalsValidationOutputData) => {
+  const handleSetTimeIntervals = async ({
+    intervals,
+  }: TimeIntervalsValidationOutputData) => {
+    const { data } = await api.post('/users/time-intervals', { intervals })
+
     console.log('DATA: ', data)
   }
 
