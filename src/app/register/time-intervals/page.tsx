@@ -21,8 +21,10 @@ import {
 } from '@/app/validations/time-intervals-validation'
 import { getWeekDays } from '@/app/utils/get-week-days'
 import { api } from '@/app/lib/api'
+import { useRouter } from 'next/navigation'
 
 const TimeIntervals = () => {
+  const router = useRouter()
   const {
     control,
     formState: { errors, isSubmitting },
@@ -57,9 +59,12 @@ const TimeIntervals = () => {
   const handleSetTimeIntervals = async ({
     intervals,
   }: TimeIntervalsValidationOutputData) => {
-    const { data } = await api.post('/users/time-intervals', { intervals })
-
-    console.log('DATA: ', data)
+    try {
+      await api.post('/users/time-intervals', { intervals })
+      router.push(`/register/update-profile`)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
