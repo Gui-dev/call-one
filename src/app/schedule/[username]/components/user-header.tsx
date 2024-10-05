@@ -25,6 +25,7 @@ const UserHeader = async ({ username }: IUserHeaderParams) => {
         alt="Gui Silva"
         height={60}
         width={60}
+        className="rounded-full"
       />
       <h1 className="text-gray-100 text-lg font-bold">{user.name}</h1>
       <h2 className="text-gray-300 text-xs">Software Engineer</h2>
