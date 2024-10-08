@@ -1,5 +1,6 @@
 import UserHeader from './components/user-header'
 import { CalendarStep } from './components/calendar-step'
+// import { ConfirmStep } from './components/confirm-step'
 
 interface IScheduleParams {
   params: {
@@ -13,6 +14,7 @@ const Schedule = async ({ params }: IScheduleParams) => {
       <UserHeader username={params.username} />
 
       <CalendarStep />
+      {/* <ConfirmStep /> */}
     </div>
   )
 }

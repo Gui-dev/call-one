@@ -5,7 +5,7 @@ import Calendar from '@/app/components/calendar'
 import { ButtonHour } from './button-hour'
 
 export const CalendarStep = () => {
-  const isDateSelected = true
+  const isDateSelected = false
 
   return (
     <Box
