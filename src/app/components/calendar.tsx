@@ -18,7 +18,12 @@ interface ICalendarWeek {
 
 type CalendarWeeks = ICalendarWeek[]
 
-const Calendar = () => {
+interface ICalendarProps {
+  selectedDate: Date | null
+  onSelectedDate: (date: Date) => void
+}
+
+const Calendar = ({ selectedDate, onSelectedDate }: ICalendarProps) => {
   const [currentDate, setCurrentDate] = useState(() => {
     return dayjs().set('date', 1)
   })
@@ -55,7 +60,7 @@ const Calendar = () => {
         return { date, disabled: true }
       }),
       ...daysInMonthArray.map((date) => {
-        return { date, disabled: false }
+        return { date, disabled: date.endOf('day').isBefore(new Date()) }
       }),
       ...nextMonthFillArray.map((date) => {
         return { date, disabled: true }
@@ -135,7 +140,10 @@ const Calendar = () => {
                 {days.map(({ date, disabled }) => {
                   return (
                     <td key={date.toString()} className="box-border">
-                      <ButtonDay disabled={disabled}>
+                      <ButtonDay
+                        disabled={disabled}
+                        onClick={() => onSelectedDate(date.toDate())}
+                      >
                         {date.get('date')}
                       </ButtonDay>
                     </td>
