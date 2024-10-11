@@ -9,7 +9,7 @@ export const POST = async (request: NextRequest) => {
   const { intervals }: TimeIntervalsValidationOutputData = await request.json()
 
   if (!session) {
-    return NextResponse.redirect('/register/time-intervals')
+    return NextResponse.redirect('/register/time-intervals', { status: 401 })
   }
 
   const user_id = session.user.id

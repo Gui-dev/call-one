@@ -3,16 +3,39 @@
 import { Box } from '@ignite-ui/react'
 import Calendar from '@/app/components/calendar'
 import { ButtonHour } from './button-hour'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
+import { api } from '@/app/lib/api'
+
+interface IAvailability {
+  possibleTimes: Array<number>
+  availableTimes: Array<number>
+}
 
 export const CalendarStep = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [availability, setAvailability] = useState<IAvailability | null>(null)
   const isDateSelected = !!selectedDate
   const weekDay = selectedDate ? dayjs(selectedDate).format('dddd') : null
   const describedDate = selectedDate
     ? dayjs(selectedDate).format('DD[ de ]MMMM')
     : null
+
+  useEffect(() => {
+    if (!selectedDate) {
+      return
+    }
+
+    api
+      .get(`/users/availability`, {
+        params: {
+          date: dayjs(selectedDate).format('YYYY-MM-DD'),
+        },
+      })
+      .then((response) => {
+        setAvailability(response.data)
+      })
+  }, [selectedDate, availability])
 
   return (
     <Box
@@ -38,17 +61,16 @@ export const CalendarStep = () => {
             <span className="text-gray-200 text-sm">{describedDate}</span>
           </h2>
           <div className="grid grid-cols-1 gap-2 lg:grid-cols-2 md:grid-cols-1">
-            <ButtonHour disabled>08:00h</ButtonHour>
-            <ButtonHour disabled>09:00h</ButtonHour>
-            <ButtonHour disabled>10:00h</ButtonHour>
-            <ButtonHour disabled>11:00h</ButtonHour>
-            <ButtonHour>12:00h</ButtonHour>
-            <ButtonHour>13:00h</ButtonHour>
-            <ButtonHour>14:00h</ButtonHour>
-            <ButtonHour>15:00h</ButtonHour>
-            <ButtonHour>16:00h</ButtonHour>
-            <ButtonHour>17:00h</ButtonHour>
-            <ButtonHour>18:00h</ButtonHour>
+            {availability?.possibleTimes.map((hour) => {
+              return (
+                <ButtonHour
+                  key={String(hour)}
+                  disabled={!availability.availableTimes.includes(hour)}
+                >
+                  {String(hour).padStart(2, '0')}:00h
+                </ButtonHour>
+              )
+            })}
           </div>
         </div>
       )}
