@@ -3,9 +3,10 @@
 import { Box } from '@ignite-ui/react'
 import Calendar from '@/app/components/calendar'
 import { ButtonHour } from './button-hour'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import dayjs from 'dayjs'
 import { api } from '@/app/lib/api'
+import { useQuery } from '@tanstack/react-query'
 
 interface IAvailability {
   possibleTimes: Array<number>
@@ -14,28 +15,28 @@ interface IAvailability {
 
 export const CalendarStep = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
-  const [availability, setAvailability] = useState<IAvailability | null>(null)
   const isDateSelected = !!selectedDate
   const weekDay = selectedDate ? dayjs(selectedDate).format('dddd') : null
   const describedDate = selectedDate
     ? dayjs(selectedDate).format('DD[ de ]MMMM')
     : null
 
-  useEffect(() => {
-    if (!selectedDate) {
-      return
-    }
-
-    api
-      .get(`/users/availability`, {
+  const selectedDateWithoutTime = selectedDate
+    ? dayjs(selectedDate).format('YYYY-MM-DD')
+    : null
+  const { data: availability } = useQuery<IAvailability>({
+    queryKey: ['availability'],
+    enabled: !!selectedDate,
+    queryFn: async () => {
+      const response = await api.get(`/users/availability`, {
         params: {
-          date: dayjs(selectedDate).format('YYYY-MM-DD'),
+          date: selectedDateWithoutTime,
         },
       })
-      .then((response) => {
-        setAvailability(response.data)
-      })
-  }, [selectedDate, availability])
+
+      return response.data
+    },
+  })
 
   return (
     <Box

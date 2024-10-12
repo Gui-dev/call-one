@@ -9,8 +9,6 @@ export const GET = async (request: NextRequest) => {
   const session = await getServerSession(authOptions)
   const date = request.nextUrl.searchParams.get('date')
 
-  console.log('DATE: ', date)
-
   if (!session) {
     return NextResponse.redirect('/register/time-intervals', { status: 401 })
   }
