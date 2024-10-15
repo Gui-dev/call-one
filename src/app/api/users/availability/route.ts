@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '../../auth/[...nextauth]/route'
 import { NextRequest, NextResponse } from 'next/server'
 import dayjs from 'dayjs'
-// import { z } from 'zod'
 
 export const GET = async (request: NextRequest) => {
   const session = await getServerSession(authOptions)

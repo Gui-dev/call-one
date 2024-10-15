@@ -7,6 +7,8 @@ import dayjs from 'dayjs'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { getWeekDays } from '../utils/get-week-days'
 import { ButtonDay } from '../schedule/[username]/components/button-day'
+import { useQuery } from '@tanstack/react-query'
+import { api } from '../lib/api'
 
 interface ICalendarWeek {
   week: number
@@ -17,6 +19,10 @@ interface ICalendarWeek {
 }
 
 type CalendarWeeks = ICalendarWeek[]
+
+interface IBlockedDates {
+  blockedWeekDays: number[]
+}
 
 interface ICalendarProps {
   selectedDate: Date | null
@@ -30,6 +36,25 @@ const Calendar = ({ selectedDate, onSelectedDate }: ICalendarProps) => {
   const shortWeekDays = getWeekDays({ short: true })
   const currentMonth = currentDate.format('MMMM')
   const currentYear = currentDate.format('YYYY')
+
+  const { data: blockedDates } = useQuery<IBlockedDates>({
+    queryKey: [
+      'blocked-dates',
+      currentDate.get('year'),
+      currentDate.get('month'),
+    ],
+    queryFn: async () => {
+      const response = await api.get(`/users/blocked-dates`, {
+        params: {
+          year: currentDate.get('year'),
+          month: currentDate.get('month'),
+        },
+      })
+
+      return response.data
+    },
+  })
+
   const calendarWeeks = useMemo(() => {
     const daysInMonthArray = Array.from({
       length: currentDate.daysInMonth(),
@@ -60,7 +85,12 @@ const Calendar = ({ selectedDate, onSelectedDate }: ICalendarProps) => {
         return { date, disabled: true }
       }),
       ...daysInMonthArray.map((date) => {
-        return { date, disabled: date.endOf('day').isBefore(new Date()) }
+        return {
+          date,
+          disabled:
+            date.endOf('day').isBefore(new Date()) ||
+            blockedDates?.blockedWeekDays.includes(date.get('day')),
+        }
       }),
       ...nextMonthFillArray.map((date) => {
         return { date, disabled: true }
@@ -84,7 +114,7 @@ const Calendar = ({ selectedDate, onSelectedDate }: ICalendarProps) => {
     )
 
     return calendarWeeks
-  }, [currentDate])
+  }, [currentDate, blockedDates])
 
   const handlePreviousMonth = () => {
     const previousMonthDate = currentDate.subtract(1, 'month')
