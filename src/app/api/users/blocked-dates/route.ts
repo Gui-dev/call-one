@@ -47,5 +47,15 @@ export const GET = async (request: NextRequest) => {
     )
   })
 
-  return NextResponse.json({ blockedWeekDays }, { status: 201 })
+  const blockedDatesRaw = await prisma.$queryRaw`
+    SELECT *
+    FROM schedulings S
+    WHERE S.user_id = ${user.id}
+    AND to_char(S.date, 'YYYY-MM') = ${`${year}-${month}`}
+  `
+
+  return NextResponse.json(
+    { blockedWeekDays, blockedDatesRaw },
+    { status: 201 },
+  )
 }
