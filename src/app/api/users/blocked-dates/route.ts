@@ -62,13 +62,13 @@ export const GET = async (request: NextRequest) => {
       AND to_char(S.date, 'YYYY-MM') = ${`${year}-${month}`}
 
     GROUP BY EXTRACT(DAY FROM S.date),
-      UTI.time_end_in_minutes,
-      UTI.time_start_in_minutes,
       ((UTI.time_end_in_minutes - UTI.time_start_in_minutes) / 60)
 
     HAVING
-      COUNT(S.date) >= (UTI.time_end_in_minutes - UTI.time_start_in_minutes) / 60.0
+      COUNT(S.date) >= ((UTI.time_end_in_minutes - UTI.time_start_in_minutes) / 60)
   `
+
+  console.log(blockedDatesRaw)
 
   const blockedDates = blockedDatesRaw.map((item) => item.date)
 
