@@ -13,7 +13,11 @@ interface IAvailability {
   availableTimes: Array<number>
 }
 
-export const CalendarStep = () => {
+interface ICalendarStepProps {
+  onSelectDateTime: (date: Date) => void
+}
+
+export const CalendarStep = ({ onSelectDateTime }: ICalendarStepProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const isDateSelected = !!selectedDate
   const weekDay = selectedDate ? dayjs(selectedDate).format('dddd') : null
@@ -37,6 +41,14 @@ export const CalendarStep = () => {
       return response.data
     },
   })
+
+  const handleSelectDateTime = async (hour: number) => {
+    const dateWithTime = dayjs(selectedDate)
+      .set('hour', hour)
+      .startOf('hour')
+      .toDate()
+    onSelectDateTime(dateWithTime)
+  }
 
   return (
     <Box
@@ -67,6 +79,7 @@ export const CalendarStep = () => {
                 <ButtonHour
                   key={String(hour)}
                   disabled={!availability.availableTimes.includes(hour)}
+                  onClick={() => handleSelectDateTime(hour)}
                 >
                   {String(hour).padStart(2, '0')}:00h
                 </ButtonHour>

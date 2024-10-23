@@ -1,15 +1,25 @@
 'use client'
 
+import { api } from '@/app/lib/api'
 import {
   confirmStepValidation,
   ConfirmStepValidationData,
 } from '@/app/validations/confirm-step-validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Box, Button, TextArea, TextInput } from '@ignite-ui/react'
+import dayjs from 'dayjs'
 import { Calendar, Clock } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
-export const ConfirmStep = () => {
+interface IConfirmStepProps {
+  schedulingDate: Date
+  onBackToCalendarPage: () => void
+}
+
+export const ConfirmStep = ({
+  schedulingDate,
+  onBackToCalendarPage,
+}: IConfirmStepProps) => {
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -17,12 +27,26 @@ export const ConfirmStep = () => {
   } = useForm<ConfirmStepValidationData>({
     resolver: zodResolver(confirmStepValidation),
   })
+  const describedDate = dayjs(schedulingDate).format('DD[ de ]MMMM[ de ]YYYY')
+  const describedHour = dayjs(schedulingDate).format('HH:mm[h]')
 
-  const handleConfirmStep = async (data: ConfirmStepValidationData) => {
-    console.log('DATA: ', data)
+  const handleConfirmSchedule = async ({
+    name,
+    email,
+    observations,
+  }: ConfirmStepValidationData) => {
+    await api.post('/users/schedule', {
+      name,
+      email,
+      observations,
+      date: schedulingDate,
+    })
+    onBackToCalendarPage()
   }
 
-  console.log('ERRORS: ', errors)
+  const handleCancelConfirmation = () => {
+    onBackToCalendarPage()
+  }
 
   return (
     <Box
@@ -34,16 +58,16 @@ export const ConfirmStep = () => {
         margin: '$6 auto 0',
         'max-width': 540,
       }}
-      onSubmit={handleSubmit(handleConfirmStep)}
+      onSubmit={handleSubmit(handleConfirmSchedule)}
     >
       <div className="flex items-center gap-4 pb-6 mb-2 border-b border-b-gray-600">
         <p className="flex items-center gap-2">
           <Calendar className="text-gray-200 h-5 w-5" />
-          05 de Outubro de 2024
+          {describedDate}
         </p>
         <p className="flex items-center gap-2">
           <Clock className="text-gray-200 h-5 w-5" />
-          18:00h
+          {describedHour}
         </p>
       </div>
 
@@ -71,7 +95,9 @@ export const ConfirmStep = () => {
       </label>
 
       <div className="flex items-center justify-end gap-4 mt-2">
-        <Button variant="tertiary">Cancelar</Button>
+        <Button variant="tertiary" onClick={handleCancelConfirmation}>
+          Cancelar
+        </Button>
         <Button disabled={isSubmitting}>Confirmar</Button>
       </div>
     </Box>
