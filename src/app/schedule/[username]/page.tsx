@@ -1,20 +1,31 @@
+'use client'
+
 import UserHeader from './components/user-header'
 import { CalendarStep } from './components/calendar-step'
-// import { ConfirmStep } from './components/confirm-step'
+import { useState } from 'react'
+import { ConfirmStep } from './components/confirm-step'
 
-interface IScheduleParams {
-  params: {
-    username: string
+const Schedule = () => {
+  const [selectedDateTime, setSelectedDateTime] = useState<Date | null>()
+
+  const handleClearSelectedDateTime = () => {
+    setSelectedDateTime(null)
   }
-}
 
-const Schedule = async ({ params }: IScheduleParams) => {
   return (
     <div className="max-w-[852px] py-4 mt-20 mx-auto mb-4">
-      <UserHeader username={params.username} />
+      <UserHeader />
 
-      <CalendarStep />
-      {/* <ConfirmStep /> */}
+      {selectedDateTime && (
+        <ConfirmStep
+          schedulingDate={selectedDateTime}
+          onBackToCalendarPage={handleClearSelectedDateTime}
+        />
+      )}
+
+      {!selectedDateTime && (
+        <CalendarStep onSelectDateTime={setSelectedDateTime} />
+      )}
     </div>
   )
 }
