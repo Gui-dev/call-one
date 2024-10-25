@@ -19,6 +19,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { api } from '@/app/lib/api'
 import { AxiosError } from 'axios'
+import { NextSeo } from 'next-seo'
 
 const ConectCalendar = () => {
   const router = useRouter()
@@ -59,94 +60,98 @@ const ConectCalendar = () => {
   }
 
   return (
-    <div className="mt-20 mx-auto mb-4 px-4 max-w-[572px] flex flex-col gap-4">
-      <div className="px-6">
-        <Heading css={{ color: '$white', lineHeight: '$base' }}>
-          Bem vindo ao Call.one
-        </Heading>
-        <Text css={{ color: '$gray400', lineHeight: '$base' }}>
-          Previsamos de algumas informações para criar seu perfil! Ah, você pode
-          editar essas informações depois
-        </Text>
-        <MultiStep size={3} currentStep={1} />
-      </div>
+    <>
+      <NextSeo title="Create an account | Call One" noindex />
 
-      <Box
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 16,
-        }}
-      >
+      <div className="mt-20 mx-auto mb-4 px-4 max-w-[572px] flex flex-col gap-4">
+        <div className="px-6">
+          <Heading css={{ color: '$white', lineHeight: '$base' }}>
+            Bem vindo ao Call.one
+          </Heading>
+          <Text css={{ color: '$gray400', lineHeight: '$base' }}>
+            Previsamos de algumas informações para criar seu perfil! Ah, você
+            pode editar essas informações depois
+          </Text>
+          <MultiStep size={3} currentStep={1} />
+        </div>
+
         <Box
           css={{
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            flexDirection: 'column',
+            gap: 16,
           }}
         >
-          <Text>Google Agenda</Text>
-          {!isSignedIn && (
-            <Button
-              variant="secondary"
-              type="submit"
-              onClick={handleGoogleSignIn}
-            >
-              Conectar
-              <ArrowRight />
-            </Button>
-          )}
+          <Box
+            css={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Text>Google Agenda</Text>
+            {!isSignedIn && (
+              <Button
+                variant="secondary"
+                type="submit"
+                onClick={handleGoogleSignIn}
+              >
+                Conectar
+                <ArrowRight />
+              </Button>
+            )}
 
-          {isSignedIn && (
-            <Button size="sm" disabled>
-              Conectado
-              <Check />
-            </Button>
+            {isSignedIn && (
+              <Button size="sm" disabled>
+                Conectado
+                <Check />
+              </Button>
+            )}
+          </Box>
+
+          {status === 'authenticated' && (
+            <form
+              onSubmit={handleSubmit(handleRegister)}
+              className="flex flex-col gap-4"
+            >
+              <label className="flex flex-col gap-2">
+                <Text>Nome de usuário</Text>
+                {/* @ts-expect-error: ERROR */}
+                <TextInput
+                  prefix="call.one/"
+                  placeholder="seu-usuário"
+                  {...register('username')}
+                />
+                {errors.username && (
+                  <div className="mt-1">
+                    <Text size="sm">
+                      <span className="text-red-500">
+                        {errors.username?.message}
+                      </span>
+                    </Text>
+                  </div>
+                )}
+              </label>
+
+              <Button
+                type="submit"
+                onClick={handleRegister}
+                disabled={hasAuthError || isSubmitting}
+              >
+                Próximo passo
+                <ArrowRight />
+              </Button>
+            </form>
+          )}
+          {hasAuthError && (
+            <span className="text-red-400 mb-2 text-sm">
+              Falha ao se conectar ao Google, verifique se você habilitou as
+              permissões de acesso ao Google Calendar
+            </span>
           )}
         </Box>
-
-        {status === 'authenticated' && (
-          <form
-            onSubmit={handleSubmit(handleRegister)}
-            className="flex flex-col gap-4"
-          >
-            <label className="flex flex-col gap-2">
-              <Text>Nome de usuário</Text>
-              {/* @ts-expect-error: ERROR */}
-              <TextInput
-                prefix="call.one/"
-                placeholder="seu-usuário"
-                {...register('username')}
-              />
-              {errors.username && (
-                <div className="mt-1">
-                  <Text size="sm">
-                    <span className="text-red-500">
-                      {errors.username?.message}
-                    </span>
-                  </Text>
-                </div>
-              )}
-            </label>
-
-            <Button
-              type="submit"
-              onClick={handleRegister}
-              disabled={hasAuthError || isSubmitting}
-            >
-              Próximo passo
-              <ArrowRight />
-            </Button>
-          </form>
-        )}
-        {hasAuthError && (
-          <span className="text-red-400 mb-2 text-sm">
-            Falha ao se conectar ao Google, verifique se você habilitou as
-            permissões de acesso ao Google Calendar
-          </span>
-        )}
-      </Box>
-    </div>
+      </div>
+    </>
   )
 }
 

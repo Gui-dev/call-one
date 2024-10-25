@@ -6,6 +6,7 @@ import { Roboto } from 'next/font/google'
 import { ServerStylesheet } from './components/server-styles'
 import { AuthProvider } from './providers/auth-provider'
 import { ReactQueryProvider } from './components/react-query-provider'
+import { DefaultSeoConfig } from './components/default-seo-config'
 
 const roboto = Roboto({
   weight: ['400', '500', '700'],
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body className={roboto.className}>
         <ReactQueryProvider>
           <AuthProvider>
+            <DefaultSeoConfig />
             <ServerStylesheet>{children}</ServerStylesheet>
           </AuthProvider>
         </ReactQueryProvider>
