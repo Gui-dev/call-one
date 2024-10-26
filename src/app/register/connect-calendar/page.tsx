@@ -19,7 +19,6 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { api } from '@/app/lib/api'
 import { AxiosError } from 'axios'
-import { NextSeo } from 'next-seo'
 
 const ConectCalendar = () => {
   const router = useRouter()
@@ -61,8 +60,6 @@ const ConectCalendar = () => {
 
   return (
     <>
-      <NextSeo title="Create an account | Call One" noindex />
-
       <div className="mt-20 mx-auto mb-4 px-4 max-w-[572px] flex flex-col gap-4">
         <div className="px-6">
           <Heading css={{ color: '$white', lineHeight: '$base' }}>

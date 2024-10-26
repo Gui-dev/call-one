@@ -5,15 +5,10 @@ import { Heading, Text } from '@ignite-ui/react'
 import previewImage from './assets/app-preview.png'
 import Image from 'next/image'
 import { ClaimUsernameForm } from './components/claim-username-form'
-import { NextSeo } from 'next-seo'
 
 export default function Home() {
   return (
     <>
-      <NextSeo
-        title="Simplify your schedule | Call One"
-        description="Connect your calendar and let people book appointments in their free time."
-      />
       <div className="flex items-center gap-20 h-screen max-w-[calc(100vw-(100vw-1160px)/2)] ml-auto">
         <div className="max-w-[400px] py-0 px-10">
           <Heading as="h1" size="4xl">

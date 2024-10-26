@@ -16,7 +16,6 @@ import {
 } from '@ignite-ui/react'
 import { ArrowRight, LoaderCircle } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import { NextSeo } from 'next-seo'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -43,7 +42,6 @@ const UpdateProfile = () => {
 
   return (
     <>
-      <NextSeo title="Update your profile | Call One" noindex />
       <div className="mt-20 mx-auto mb-4 px-4 max-w-[572px] flex flex-col gap-4">
         <div className="px-6">
           <Heading css={{ color: '$white', lineHeight: '$base' }}>

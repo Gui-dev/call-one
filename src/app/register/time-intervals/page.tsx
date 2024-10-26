@@ -22,7 +22,6 @@ import {
 import { getWeekDays } from '@/app/utils/get-week-days'
 import { api } from '@/app/lib/api'
 import { useRouter } from 'next/navigation'
-import { NextSeo } from 'next-seo'
 
 const TimeIntervals = () => {
   const router = useRouter()
@@ -70,7 +69,6 @@ const TimeIntervals = () => {
 
   return (
     <>
-      <NextSeo title="Select your availability | Call One" noindex />
       <div className="mt-20 mx-auto mb-4 px-4 max-w-[572px] flex flex-col gap-4">
         <div className="px-6">
           <Heading css={{ color: '$white', lineHeight: '$base' }}>
